@@ -1,0 +1,29 @@
+name: .NET Build and Test CI
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Restore Dependencies
+      run: dotnet restore InventoryManagementSystem.slnx
+
+    - name: Build Solution
+      run: dotnet build InventoryManagementSystem.slnx --no-restore --configuration Release
+
+    - name: Run Automated Tests
+      run: dotnet test InventoryManagementSystem.slnx --no-build --verbosity normal

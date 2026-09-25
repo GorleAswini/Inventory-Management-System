@@ -1,0 +1,237 @@
+@model InventoryManagement.Core.DTOs.DashboardSummaryDto
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">Inventory Dashboard</h3>
+        <p class="text-muted mb-0">Real-time overview of organizational hardware, equipment, and lifecycle status.</p>
+    </div>
+    <div>
+        <a asp-controller="Assets" asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-plus-lg me-1"></i> Add New Asset
+        </a>
+    </div>
+</div>
+
+<!-- 4 Core KPI Cards (SRS Section 24) -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card p-3 h-100 bg-white border-0 shadow-sm border-start border-primary border-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Total Assets</span>
+                    <h2 class="fw-bold text-dark mb-0 mt-1">@Model.TotalAssets</h2>
+                </div>
+                <div class="bg-primary-subtle text-primary p-3 rounded-circle">
+                    <i class="bi bi-box-seam fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2 text-muted small">
+                Across <strong>@Model.NumberOfCategories</strong> categories
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card p-3 h-100 bg-white border-0 shadow-sm border-start border-success border-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Available In Stock</span>
+                    <h2 class="fw-bold text-success mb-0 mt-1">@Model.AvailableAssets</h2>
+                </div>
+                <div class="bg-success-subtle text-success p-3 rounded-circle">
+                    <i class="bi bi-check2-circle fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2 text-muted small">
+                Ready for user deployment
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card p-3 h-100 bg-white border-0 shadow-sm border-start border-info border-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Assigned Assets</span>
+                    <h2 class="fw-bold text-info mb-0 mt-1">@Model.AssignedAssets</h2>
+                </div>
+                <div class="bg-info-subtle text-info p-3 rounded-circle">
+                    <i class="bi bi-person-check fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2 text-muted small">
+                Allocated to departments
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="card p-3 h-100 bg-white border-0 shadow-sm border-start border-warning border-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <span class="text-muted small fw-semibold text-uppercase">Under Maintenance</span>
+                    <h2 class="fw-bold text-warning mb-0 mt-1">@Model.UnderMaintenance</h2>
+                </div>
+                <div class="bg-warning-subtle text-warning p-3 rounded-circle">
+                    <i class="bi bi-tools fs-4"></i>
+                </div>
+            </div>
+            <div class="mt-2 text-muted small">
+                Service or repair in progress
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row (SRS Section 7.2) -->
+<div class="row g-4 mb-4">
+    <div class="col-12 col-lg-7">
+        <div class="card p-4 h-100 bg-white shadow-sm border-0">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-bar-chart me-2 text-primary"></i>Assets by Category</h5>
+            <div style="height: 280px; position: relative;">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-5">
+        <div class="card p-4 h-100 bg-white shadow-sm border-0">
+            <h5 class="fw-bold text-dark mb-3"><i class="bi bi-pie-chart me-2 text-success"></i>Assets by Status</h5>
+            <div style="height: 280px; position: relative;">
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Activities & Notifications (SRS Section 8 & 7.10) -->
+<div class="row g-4">
+    <div class="col-12 col-lg-8">
+        <div class="card p-4 bg-white shadow-sm border-0">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-clock-history me-2 text-secondary"></i>Recent Audit Activities</h5>
+                <a asp-controller="Reports" asp-action="ActivityReport" class="btn btn-sm btn-link text-decoration-none">View All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr class="small text-muted text-uppercase">
+                            <th>Action</th>
+                            <th>Entity</th>
+                            <th>Performed By</th>
+                            <th>Date / Time</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.RecentActivities.Any())
+                        {
+                            @foreach (var act in Model.RecentActivities)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="badge @(act.Action == "Created" ? "bg-success" : act.Action == "Updated" ? "bg-primary" : act.Action == "Deleted" ? "bg-danger" : "bg-secondary")">
+                                            @act.Action
+                                        </span>
+                                    </td>
+                                    <td class="fw-semibold">@act.EntityName</td>
+                                    <td>@act.PerformedBy</td>
+                                    <td class="small text-muted">@act.CreatedDate.ToLocalTime().ToString("g")</td>
+                                    <td class="small text-truncate" style="max-width: 260px;" title="@act.Description">@act.Description</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr><td colspan="5" class="text-center text-muted py-3">No activity logs recorded yet.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-4">
+        <div class="card p-4 bg-white shadow-sm border-0 h-100">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold text-dark mb-0"><i class="bi bi-bell me-2 text-warning"></i>Recent Alerts</h5>
+                <a asp-controller="Notifications" asp-action="Index" class="btn btn-sm btn-link text-decoration-none">Notification Center</a>
+            </div>
+            <div class="list-group list-group-flush">
+                @if (Model.RecentNotifications.Any())
+                {
+                    @foreach (var notif in Model.RecentNotifications)
+                    {
+                        <div class="list-group-item px-0 py-2 border-0 border-bottom">
+                            <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                                <span class="badge bg-light text-dark border">@notif.NotificationType</span>
+                                <small class="text-muted">@notif.CreatedDate.ToLocalTime().ToString("t")</small>
+                            </div>
+                            <p class="mb-0 small text-secondary">@notif.Message</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted small py-3 text-center">No notifications at this time.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Category Chart
+    const catCtx = document.getElementById('categoryChart').getContext('2d');
+    const catLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssetsByCategory.Keys));
+    const catData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssetsByCategory.Values));
+
+    new Chart(catCtx, {
+        type: 'bar',
+        data: {
+            labels: catLabels,
+            datasets: [{
+                label: 'Asset Count',
+                data: catData,
+                backgroundColor: '#3b82f6',
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+
+    // Status Chart
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    const statusLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssetsByStatus.Keys));
+    const statusData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AssetsByStatus.Values));
+
+    new Chart(statusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                data: statusData,
+                backgroundColor: ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#64748b', '#111827']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+</script>
+}

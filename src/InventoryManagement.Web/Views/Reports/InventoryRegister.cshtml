@@ -1,0 +1,121 @@
+@model List<InventoryManagement.Core.Entities.Asset>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Report 1 - Inventory Register";
+    var categories = ViewBag.Categories as List<InventoryManagement.Core.Entities.Category> ?? new();
+    var locations = ViewBag.Locations as List<string> ?? new();
+    var departments = ViewBag.Departments as List<string> ?? new();
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">Inventory Register Report</h3>
+        <p class="text-muted mb-0">Acme Global Technologies | Generated: @DateTime.UtcNow.ToLocalTime().ToString("f")</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-printer me-1"></i> Print / Save PDF
+        </button>
+        <a asp-action="Index" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Back to Reports
+        </a>
+    </div>
+</div>
+
+<!-- Filter Criteria (SRS Section 22) -->
+<div class="card p-3 mb-4 bg-white border-0 shadow-sm">
+    <form method="get" asp-action="InventoryRegister" class="row g-3">
+        <div class="col-12 col-md-3">
+            <label class="form-label small text-muted">Category</label>
+            <select name="category" class="form-select form-control-sm">
+                <option value="">-- All Categories --</option>
+                @foreach (var c in categories)
+                {
+                    <option value="@c.Name" selected="@(ViewBag.Category == c.Name)">@c.Name</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-3">
+            <label class="form-label small text-muted">Status</label>
+            <select name="status" class="form-select form-control-sm">
+                <option value="">-- All Statuses --</option>
+                @foreach (var st in Enum.GetNames<AssetStatus>())
+                {
+                    <option value="@st" selected="@(ViewBag.Status == st)">@st</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-2">
+            <label class="form-label small text-muted">Location</label>
+            <select name="location" class="form-select form-control-sm">
+                <option value="">-- All Locations --</option>
+                @foreach (var loc in locations)
+                {
+                    <option value="@loc" selected="@(ViewBag.Location == loc)">@loc</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-2">
+            <label class="form-label small text-muted">Department</label>
+            <select name="department" class="form-select form-control-sm">
+                <option value="">-- All Departments --</option>
+                @foreach (var dep in departments)
+                {
+                    <option value="@dep" selected="@(ViewBag.Department == dep)">@dep</option>
+                }
+            </select>
+        </div>
+        <div class="col-12 col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary btn-sm w-100">
+                <i class="bi bi-filter me-1"></i> Apply Filter
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Report Summary Header -->
+<div class="d-flex justify-content-between align-items-center mb-2 px-1">
+    <span class="small text-muted">Total Records Matched: <strong>@Model.Count</strong></span>
+    <span class="small text-muted">Total Asset Valuation: <strong>$@Model.Sum(a => a.PurchaseCost ?? 0).ToString("N2")</strong></span>
+</div>
+
+<div class="card bg-white shadow-sm border-0">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle mb-0">
+            <thead class="table-light">
+                <tr class="small text-muted text-uppercase">
+                    <th>Asset Code</th>
+                    <th>Asset Name</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Location</th>
+                    <th>Assigned To</th>
+                    <th>Purchase Date</th>
+                    <th class="text-end">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    @foreach (var a in Model)
+                    {
+                        <tr>
+                            <td><span class="badge bg-light text-primary border">@a.AssetCode</span></td>
+                            <td class="fw-semibold">@a.AssetName</td>
+                            <td>@(a.Category?.Name ?? "--")</td>
+                            <td><span class="badge @(a.Status == AssetStatus.Available ? "bg-success" : a.Status == AssetStatus.Assigned ? "bg-primary" : "bg-warning text-dark")">@a.Status</span></td>
+                            <td>@(a.Location ?? "--")</td>
+                            <td>@(a.AssignedToUser != null ? $"{a.AssignedToUser.FirstName} {a.AssignedToUser.LastName}" : "--")</td>
+                            <td>@(a.PurchaseDate.HasValue ? a.PurchaseDate.Value.ToString("yyyy-MM-dd") : "--")</td>
+                            <td class="text-end">@(a.PurchaseCost.HasValue ? $"${a.PurchaseCost:F2}" : "--")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="8" class="text-center py-4 text-muted">No records matching the filter criteria.</td></tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

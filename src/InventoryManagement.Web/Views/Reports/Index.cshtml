@@ -1,0 +1,131 @@
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Reports Center";
+}
+
+<div class="mb-4">
+    <h3 class="fw-bold text-dark mb-1">Reports & Analytics</h3>
+    <p class="text-muted mb-0">Generate standardized operational and audit reports for organizational compliance (SRS Section 7.13 & 22).</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card p-4 h-100 bg-white border-0 shadow-sm d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-primary-subtle text-primary p-3 rounded">
+                        <i class="bi bi-card-checklist fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Report 1: Inventory Register</h5>
+                        <small class="text-muted">Master asset list with pricing & dates</small>
+                    </div>
+                </div>
+                <p class="text-secondary small">Comprehensive tabular register of all hardware assets with multi-parameter filtering.</p>
+            </div>
+            <a asp-action="InventoryRegister" class="btn btn-outline-primary btn-sm w-100">
+                Generate Register <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card p-4 h-100 bg-white border-0 shadow-sm d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-success-subtle text-success p-3 rounded">
+                        <i class="bi bi-pie-chart fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Report 2: Asset Status</h5>
+                        <small class="text-muted">Grouped by lifecycle stage</small>
+                    </div>
+                </div>
+                <p class="text-secondary small">Displays inventory grouped by Available, Assigned, Maintenance, Damaged, and Retired.</p>
+            </div>
+            <a asp-action="StatusReport" class="btn btn-outline-success btn-sm w-100">
+                View Status Report <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card p-4 h-100 bg-white border-0 shadow-sm d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-info-subtle text-info p-3 rounded">
+                        <i class="bi bi-grid-3x3-gap fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Report 3: Category Report</h5>
+                        <small class="text-muted">Breakdown by asset classification</small>
+                    </div>
+                </div>
+                <p class="text-secondary small">Categorized inventory groupings across laptops, desktops, network hardware, and peripherals.</p>
+            </div>
+            <a asp-action="CategoryReport" class="btn btn-outline-info btn-sm w-100">
+                View Category Report <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card p-4 h-100 bg-white border-0 shadow-sm d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-warning-subtle text-warning p-3 rounded">
+                        <i class="bi bi-geo-alt fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Report 4: Location Report</h5>
+                        <small class="text-muted">Physical facility allocation</small>
+                    </div>
+                </div>
+                <p class="text-secondary small">Inventories distributed by campus, floor, bay, or laboratory room.</p>
+            </div>
+            <a asp-action="LocationReport" class="btn btn-outline-warning btn-sm w-100">
+                View Location Report <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card p-4 h-100 bg-white border-0 shadow-sm d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-secondary-subtle text-secondary p-3 rounded">
+                        <i class="bi bi-building fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Report 5: Department Report</h5>
+                        <small class="text-muted">Organizational cost center allocation</small>
+                    </div>
+                </div>
+                <p class="text-secondary small">Inventories assigned to engineering, operations, finance, and human resources.</p>
+            </div>
+            <a asp-action="DepartmentReport" class="btn btn-outline-secondary btn-sm w-100">
+                View Department Report <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-xl-4">
+        <div class="card p-4 h-100 bg-white border-0 shadow-sm d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="bg-danger-subtle text-danger p-3 rounded">
+                        <i class="bi bi-clock-history fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">Report 6: Activity Report</h5>
+                        <small class="text-muted">Chronological audit trail</small>
+                    </div>
+                </div>
+                <p class="text-secondary small">Complete audit log of asset creations, status updates, user assignments, and deletions.</p>
+            </div>
+            <a asp-action="ActivityReport" class="btn btn-outline-danger btn-sm w-100">
+                View Audit Report <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</div>
