@@ -1,0 +1,73 @@
+@model InventoryManagement.Web.ViewModels.Account.LoginViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Login";
+}
+
+<div class="d-flex align-items-center justify-content-center min-vh-100 bg-light py-5">
+    <div class="card shadow-lg p-4 p-md-5" style="max-width: 440px; width: 100%; border-radius: 16px;">
+        <div class="text-center mb-4">
+            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 56px; height: 56px;">
+                <i class="bi bi-boxes fs-2"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Inventory Management</h4>
+            <p class="text-muted small">Sign in to your account</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger py-2 small">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div><i class="bi bi-exclamation-circle me-1"></i> @error.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        <form asp-action="Login" method="post" asp-route-returnUrl="@ViewData["ReturnUrl"]">
+            <div class="mb-3">
+                <label asp-for="UsernameOrEmail" class="form-label small fw-semibold text-secondary"></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                    <input asp-for="UsernameOrEmail" class="form-control" id="userInput" placeholder="admin or inventory@demo.com" required />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label small fw-semibold text-secondary"></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
+                    <input asp-for="Password" class="form-control" id="passInput" type="password" placeholder="••••••••" required />
+                </div>
+            </div>
+
+            <div class="mb-4 form-check">
+                <input asp-for="RememberMe" class="form-check-input" />
+                <label asp-for="RememberMe" class="form-check-label small text-muted"></label>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold shadow-sm mb-3">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </button>
+        </form>
+
+        <div class="border-top pt-3 text-center">
+            <p class="small text-muted mb-2">Quick Demo Fill:</p>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary btn-sm flex-fill" onclick="fillCreds('admin', 'Admin@1234')">
+                    Asset Manager
+                </button>
+                <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="fillCreds('inventory', 'Executive@1234')">
+                    Inventory Exec
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function fillCreds(u, p) {
+        document.getElementById('userInput').value = u;
+        document.getElementById('passInput').value = p;
+    }
+</script>

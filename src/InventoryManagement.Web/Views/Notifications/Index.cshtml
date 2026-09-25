@@ -1,0 +1,58 @@
+@model List<InventoryManagement.Core.Entities.Notification>
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Notification Center";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">Notification Center</h3>
+        <p class="text-muted mb-0">In-application alerts for inventory creation, updates, and system activities (SRS Section 7.10 & 7.11).</p>
+    </div>
+</div>
+
+<div class="card bg-white shadow-sm border-0" style="max-width: 900px;">
+    <div class="list-group list-group-flush">
+        @if (Model.Any())
+        {
+            @foreach (var n in Model)
+            {
+                <div class="list-group-item p-3 @(!n.IsRead ? "bg-light border-start border-primary border-4" : "")">
+                    <div class="d-flex align-items-start justify-content-between">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="p-2 rounded-circle @(n.NotificationType == InventoryManagement.Core.Enums.NotificationType.AssetCreated ? "bg-success-subtle text-success" : n.NotificationType == InventoryManagement.Core.Enums.NotificationType.AssetUpdated ? "bg-primary-subtle text-primary" : "bg-danger-subtle text-danger")">
+                                <i class="bi @(n.NotificationType == InventoryManagement.Core.Enums.NotificationType.AssetCreated ? "bi-plus-circle" : n.NotificationType == InventoryManagement.Core.Enums.NotificationType.AssetUpdated ? "bi-pencil" : "bi-trash")"></i>
+                            </div>
+                            <div>
+                                <span class="badge bg-secondary-subtle text-secondary mb-1">@n.NotificationType</span>
+                                <h6 class="mb-1 fw-semibold text-dark">@n.Message</h6>
+                                <small class="text-muted"><i class="bi bi-clock me-1"></i>@n.CreatedDate.ToLocalTime().ToString("f")</small>
+                            </div>
+                        </div>
+                        <div>
+                            @if (!n.IsRead)
+                            {
+                                <form method="post" asp-action="MarkRead" asp-route-id="@n.Id" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-check-lg me-1"></i> Mark as Read
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="badge text-muted small"><i class="bi bi-check2-all me-1"></i> Read</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-bell-slash fs-1 d-block mb-2"></i>
+                You have no notifications at this time.
+            </div>
+        }
+    </div>
+</div>
